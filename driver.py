@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.animation import FuncAnimation
@@ -8,9 +9,19 @@ import mpl_toolkits.mplot3d.axes3d as p3
 import setup
 from abbv import Abbv
 
-#sim = setup.raining(64)
-#sim = setup.single_drop_uncentered(64)
-sim = setup.still(64)
+if(len(sys.argv) > 1):
+	example = sys.argv[1]
+	if example == 'rain':
+		sim = setup.raining(86)
+	elif example == 'drop':
+		sim = setup.single_drop(64)
+	elif example == 'wake':
+		sim = setup.wake(64)
+	elif example == 'coast':
+		sim = setup.coastline(64)
+else:
+	# Default scenario
+	sim = setup.still(64)
 sim.set_bc('reflective')
 #sim.set_bc('passive')
 #sim.set_bc('periodic')
@@ -22,7 +33,7 @@ X=np.arange(-(nx-1)/2.,(nx)/2.,1.)
 Y=np.arange(-(ny-1)/2.,(ny)/2.,1.)
 X,Y=np.meshgrid(X,Y)
 
-zlim = 0.15 
+zlim = 0.2 
 
 #fig = plt.figure(figsize=(12, 12))
 #ax = fig.gca(projection='3d')
@@ -53,7 +64,7 @@ print('FPS: %f' % (100 / (time.time() - tstart)))
 #ax = fig.add_subplot('211',projection='3d')
 
 for it in range(0,10000):
-	sim.step5()
+	sim.step()
 	if(it%15 == 0):
 		ax.clear()
 		ax.plot_wireframe(X,Y,sim.get_h())
