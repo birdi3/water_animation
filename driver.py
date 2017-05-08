@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import axes3d
+import mpl_toolkits.mplot3d.axes3d as p3
 
 import setup
 from abbv import Abbv
@@ -22,8 +24,31 @@ X,Y=np.meshgrid(X,Y)
 
 zlim = 0.15 
 
-fig = plt.figure(figsize=(12, 12)) 
-ax = fig.gca(projection='3d')
+#fig = plt.figure(figsize=(12, 12))
+#ax = fig.gca(projection='3d')
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+import time
+
+wframe = None
+tstart = time.time()
+for it in range(0,10000):
+    sim.step5()
+    if(it%15 == 0):
+        oldcol = wframe
+
+        wframe = ax.plot_wireframe(X, Y, sim.get_h(), rstride=2, cstride=2)
+
+        # Remove old line collection before drawing
+        if oldcol is not None:
+            ax.collections.remove(oldcol)
+
+        plt.pause(.001)
+
+print('FPS: %f' % (100 / (time.time() - tstart)))
+
 #fig.canvas.mpl_connect('button_press_event', onClick)
 #ax = fig.add_subplot('211',projection='3d')
 
@@ -35,7 +60,7 @@ for it in range(0,10000):
 		ax.set_zlim3d(-zlim,zlim)
 		ax.axis('off')
 		fig.tight_layout()
-		plt.pause(0.0001)
+		plt.pause(0.00001)
 	if(it==0):
 		raw_input('Press Enter to continue...')
 
